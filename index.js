@@ -1,5 +1,6 @@
 const express = require('express');
 const { HttpsProxyAgent } = require('https-proxy-agent');
+const fetch = require('node-fetch');
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.post('/proxy', async (req, res) => {
       body: JSON.stringify(req.body),
       agent,
     });
+
     const data = await response.text();
     res.status(response.status)
       .set('Content-Type', 'application/json')
