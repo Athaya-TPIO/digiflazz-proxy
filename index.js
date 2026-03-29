@@ -1,6 +1,6 @@
 const express = require('express');
-const { HttpsProxyAgent } = require('https-proxy-agent');
 const fetch = require('node-fetch');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 
 const app = express();
 app.use(express.json());
@@ -12,7 +12,11 @@ app.post('/proxy', async (req, res) => {
   }
 
   try {
-    const agent = new HttpsProxyAgent(process.env.QUOTAGUARDSTATIC_URL);
+    const proxyUrl = process.env.QUOTAGUARDSTATIC_URL;
+    console.log('Using proxy:', proxyUrl ? 'YES' : 'NO');
+    
+    const agent = new HttpsProxyAgent(proxyUrl);
+    
     const response = await fetch('https://api.digiflazz.com/v2/transaction', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -21,6 +25,7 @@ app.post('/proxy', async (req, res) => {
     });
 
     const data = await response.text();
+    console.log('Digiflazz response status:', response.status);
     res.status(response.status)
       .set('Content-Type', 'application/json')
       .send(data);
